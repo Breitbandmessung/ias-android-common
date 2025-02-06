@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+
+def props = new Properties()
+file("../gradle.properties").withInputStream { props.load(it) }
+
+def versionTag = props.getProperty("version")
+
+
+
+android
+{
+    namespace 'com.zafaco.moduleCommon'
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig
+    {
+        minSdkVersion Integer.parseInt(android_min_sdk_version)
+        targetSdkVersion Integer.parseInt(android_target_sdk_version)
+        compileSdk Integer.parseInt(android_compile_sdk_version)
+        versionCode Integer.valueOf(System.env.VERSION_CODE ?: 1)
+        versionName "${versionTag}"
+        buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+        buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+    }
+
+
+    buildTypes
+    {
+        debug
+        {
+            minifyEnabled false
+            shrinkResources false
+        }
+        release
+        {
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies
+{
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation "androidx.appcompat:appcompat:$androidxAppcompat"
+
+    api "com.squareup.retrofit2:retrofit:$retrofit2"
+    api "com.squareup.retrofit2:converter-gson:$retrofit2"
+
+    api "com.google.android.gms:play-services-location:$playServicesVersion"
+}

@@ -1,0 +1,7 @@
+include ':ias-android-common'
+
+project(':ias-android-common').projectDir = new File('module')
+
+
+
+
